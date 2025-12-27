@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  fullName     String?  @map("full_name")
+  isActive     Boolean  @default(true) @map("is_active")
+  role         String   @default("USER")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  wallet        CreditWallet?
+  searchHistory SearchHistory[]
+  dataUnlocks   DataUnlock[]
+
+  @@map("users")
+}
+
+model CreditWallet {
+  id          String   @id @default(uuid())
+  userId      String   @unique @map("user_id")
+  balance     Int      @default(0)
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  transactions CreditTransaction[]
+  user        User     @relation(fields: [userId], references: [id])
+
+  @@map("credit_wallets")
+}
+
+model CreditTransaction {
+  id              String   @id @default(uuid())
+  walletId        String   @map("wallet_id")
+  amount          Int
+  description     String?
+  transactionType String  @map("transaction_type")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  wallet CreditWallet @relation(fields: [walletId], references: [id])
+
+  @@map("credit_transactions")
+}
+
+model Property {
+  id                 String    @id @default(uuid())
+  addressFull        String    @map("address_full")
+  zipCode            String    @map("zip_code")
+  city               String?
+  state              String?
+  inscricaoMunicipal String?   @map("inscricao_municipal")
+  matricula          String?
+  cartorioName       String?   @map("cartorio_name")
+  latitude           Decimal?
+  longitude          Decimal?
+  status             String         @default("PENDING")
+  lastEnrichedAt     DateTime? @map("last_enriched_at")
+  createdAt          DateTime  @default(now()) @map("created_at")
+  updatedAt          DateTime  @updatedAt @map("updated_at")
+
+  owners        Owner[]
+  searchHistory SearchHistory[]
+  dataUnlocks   DataUnlock[]
+
+  @@map("properties")
+}
+
+model Owner {
+  id           String   @id @default(uuid())
+  propertyId   String   @map("property_id")
+  name         String
+  documentType String?  @map("document_type") // CPF, CNPJ
+  documentHash String?  @map("document_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  property Property       @relation(fields: [propertyId], references: [id])
+  contacts OwnerContact[]
+
+  @@map("owners")
+}
+
+model OwnerContact {
+  id                    String   @id @default(uuid())
+  ownerId               String   @map("owner_id")
+  contactType           String      @map("contact_type")
+  contactValueEncrypted String   @map("contact_value_encrypted")
+  contactValueMasked    String   @map("contact_value_masked")
+  source                String?
+  confidenceScore       Decimal? @map("confidence_score")
+  createdAt             DateTime @default(now()) @map("created_at")
+
+  owner       Owner        @relation(fields: [ownerId], references: [id])
+  dataUnlocks DataUnlock[]
+
+  @@map("owner_contacts")
+}
+
+model SearchHistory {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  searchTerm    String?  @map("search_term")
+  propertyId    String?  @map("property_id")
+  status        String
+  resultSummary String?    @map("result_summary")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user     User      @relation(fields: [userId], references: [id])
+  property Property? @relation(fields: [propertyId], references: [id])
+
+  @@map("search_history")
+}
+
+model DataUnlock {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  propertyId     String   @map("property_id")
+  ownerContactId String?  @map("owner_contact_id")
+  creditCost     Int      @map("credit_cost")
+  unlockedAt     DateTime @default(now()) @map("unlocked_at")
+  ipAddress      String?  @map("ip_address")
+  userAgent      String?  @map("user_agent")
+
+  user         User          @relation(fields: [userId], references: [id])
+  property     Property      @relation(fields: [propertyId], references: [id])
+  ownerContact OwnerContact? @relation(fields: [ownerContactId], references: [id])
+
+  @@map("data_unlocks")
+}

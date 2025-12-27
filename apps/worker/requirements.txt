@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+playwright
+requests
+sqlalchemy
+redis
+pydantic-settings
+httpx

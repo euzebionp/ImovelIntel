@@ -1,0 +1,17 @@
+Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+
+Error: Prisma schema validation - (validate wasm)
+Error code: P1012
+[1;91merror[0m: [1mError validating field `resultSummary` in model `SearchHistory`: Field `resultSummary` in model `SearchHistory` can't be of type Json. The current connector does not support the Json type.[0m
+  [1;94m-->[0m  [4mprisma\schema.prisma:110[0m
+[1;94m   | [0m
+[1;94m109 | [0m  status        String
+[1;94m110 | [0m  [1;91mresultSummary Json?    @map("result_summary")[0m
+[1;94m111 | [0m  createdAt     DateTime @default(now()) @map("created_at")
+[1;94m   | [0m
+
+Validation Error Count: 1
+[Context: validate]
+
+Prisma CLI Version : 5.22.0
