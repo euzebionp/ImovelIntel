@@ -45,7 +45,7 @@ export class SearchService {
     try {
       console.log(`[SearchService] Calling worker for search ${searchId}`);
       await firstValueFrom(
-        this.httpService.post('http://localhost:8001/scrape', {
+        this.httpService.post('http://localhost:8000/scrape', {
           searchId,
           ...data,
         })
