@@ -98,4 +98,26 @@ export class CrmService {
       data: { stageId }
     });
   }
+
+  async updateLead(id: string, data: any) {
+    return this.prisma.lead.update({
+      where: { id },
+      data: {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        budget: data.budget,
+        // We generally don't update stage/userId here blindly, but for MVP it's fine to rely on what's passed or ignored
+      }
+    });
+  }
+
+  async deleteLead(id: string) {
+    // Delete related records first if necessary (e.g. interactions), 
+    // or rely on Cascade delete if configured in schema.
+    // Assuming Cascade or no relations blocking:
+    return this.prisma.lead.delete({
+      where: { id }
+    });
+  }
 }

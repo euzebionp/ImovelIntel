@@ -132,13 +132,15 @@ function AuthenticatedApp() {
           />
           
           <div className="pt-4 mt-auto border-t border-border/50 space-y-2">
-             <NavItem 
-              icon={<Settings size={20} />} 
-              label="Configurações" 
-              isActive={activeTab === 'settings'} 
-              expanded={sidebarOpen}
-              onClick={() => setActiveTab('settings')}
-            />
+             {user?.role === 'ADMIN' && (
+               <NavItem 
+                icon={<Settings size={20} />} 
+                label="Configurações" 
+                isActive={activeTab === 'settings'} 
+                expanded={sidebarOpen}
+                onClick={() => setActiveTab('settings')}
+              />
+             )}
             <button 
                 onClick={logout}
                 className={cn(
@@ -355,17 +357,17 @@ function StatCard({ title, value, change, icon }: { title: string, value: string
 
 function AppContent() {
     const { isAuthenticated, isLoading } = useAuth();
-    const [isRegistering, setIsRegistering] = useState(false);
+    // const [isRegistering, setIsRegistering] = useState(false); // Removed public registration
 
     if (isLoading) {
         return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>;
     }
 
     if (!isAuthenticated) {
-        if (isRegistering) {
-            return <RegisterPage onLoginClick={() => setIsRegistering(false)} />;
-        }
-        return <LoginPage onRegisterClick={() => setIsRegistering(true)} />;
+        // if (isRegistering) {
+        //     return <RegisterPage onLoginClick={() => setIsRegistering(false)} />;
+        // }
+        return <LoginPage />;
     }
 
     return <AuthenticatedApp />;

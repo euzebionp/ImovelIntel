@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Req } from '@nestjs/common';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { CrmService } from './crm.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 
 @Controller('crm/leads')
 export class CrmController {
@@ -25,5 +27,19 @@ export class CrmController {
   @Put(':id/stage')
   updateStage(@Param('id') id: string, @Body('stageId') stageId: string) {
     return this.crmService.updateLeadStage(id, stageId);
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  update(@Param('id') id: string, @Body() updateLeadDto: any) {
+    return this.crmService.updateLead(id, updateLeadDto);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  remove(@Param('id') id: string) {
+    return this.crmService.deleteLead(id);
   }
 }

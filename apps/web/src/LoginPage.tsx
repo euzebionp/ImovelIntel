@@ -4,7 +4,7 @@ import { useAuth } from './contexts/AuthContext';
 import { api } from './lib/api';
 import { Building2, Loader2 } from 'lucide-react';
 
-export function LoginPage({ onRegisterClick }: { onRegisterClick: () => void }) {
+export function LoginPage() {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -101,9 +101,14 @@ export function LoginPage({ onRegisterClick }: { onRegisterClick: () => void }) 
 
           <div className="text-center text-sm">
             <span className="text-muted-foreground">Não tem uma conta? </span>
-            <button onClick={onRegisterClick} className="font-medium text-primary hover:underline">
-              Cadastre-se
-            </button>
+            <a 
+              href="https://wa.me/5534998632929" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="font-medium text-emerald-600 hover:text-emerald-700 hover:underline flex items-center justify-center gap-2 mt-2"
+            >
+              Falar com o consultor Euzébio Borges
+            </a>
           </div>
         </div>
       </div>

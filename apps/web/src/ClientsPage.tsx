@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { api } from './lib/api';
-import { Plus, Phone, Mail, MoreHorizontal } from 'lucide-react';
+import { Plus, Phone, Mail, Pencil, Trash } from 'lucide-react';
+import { useAuth } from './contexts/AuthContext';
 
 interface Lead {
   id: string;
@@ -16,9 +17,11 @@ interface Lead {
 }
 
 export function ClientsPage() {
+  const { user } = useAuth();
   const [leads, setLeads] = useState<Lead[]>([]);
   const [loading, setLoading] = useState(true);
   const [showNewLeadModal, setShowNewLeadModal] = useState(false);
+  const [editingLead, setEditingLead] = useState<Lead | null>(null);
 
   useEffect(() => {
     fetchLeads();
@@ -35,7 +38,7 @@ export function ClientsPage() {
     }
   };
 
-  const handleCreateLead = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleCreateOrUpdateLead = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -44,20 +47,47 @@ export function ClientsPage() {
         email: formData.get('email'),
         budget: Number(formData.get('budget')),
         source: 'MANUAL',
-        userId: 'demo-user-id' // Hardcoded for MVP
+        userId: user?.id || 'demo-user-id' 
     };
 
     try {
-        await api.post('/crm/leads', data);
-        alert('Cliente cadastrado com sucesso!');
+        if (editingLead) {
+             await api.put(`/crm/leads/${editingLead.id}`, data);
+             alert('Cliente atualizado com sucesso!');
+        } else {
+             await api.post('/crm/leads', data);
+             alert('Cliente cadastrado com sucesso!');
+        }
         setShowNewLeadModal(false);
+        setEditingLead(null);
         fetchLeads();
     } catch (error: any) {
-        console.error("Failed to create lead", error);
-        const errorMsg = error.response?.data?.message || 'Erro ao cadastrar cliente. Verifique o console.';
+        console.error("Failed to save lead", error);
+        const errorMsg = error.response?.data?.message || 'Erro ao salvar cliente.';
         alert(`Erro: ${errorMsg}`);
     }
   };
+
+  const handleDelete = async (id: string) => {
+      if (!confirm('Tem certeza que deseja excluir este cliente?')) return;
+      try {
+          await api.delete(`/crm/leads/${id}`);
+          setLeads(leads.filter(l => l.id !== id));
+      } catch (error: any) {
+          console.error("Failed to delete lead", error);
+          alert('Erro ao excluir cliente. Verifique se você tem permissão.');
+      }
+  }
+
+  const openEditModal = (lead: Lead) => {
+      setEditingLead(lead);
+      setShowNewLeadModal(true);
+  }
+
+  const openNewModal = () => {
+      setEditingLead(null);
+      setShowNewLeadModal(true);
+  }
 
   if (loading) return <div className="p-8">Carregando clientes...</div>;
 
@@ -69,7 +99,7 @@ export function ClientsPage() {
           <p className="text-muted-foreground">Gerencie seus leads e oportunidades.</p>
         </div>
         <button 
-          onClick={() => setShowNewLeadModal(true)}
+          onClick={openNewModal}
           className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center gap-2"
         >
           <Plus size={18} /> Novo Cliente
@@ -85,7 +115,7 @@ export function ClientsPage() {
               <th className="px-6 py-4 font-medium text-muted-foreground">Orçamento</th>
               <th className="px-6 py-4 font-medium text-muted-foreground">Estágio</th>
               <th className="px-6 py-4 font-medium text-muted-foreground">Origem</th>
-              <th className="px-6 py-4 font-medium text-muted-foreground"></th>
+              {user?.role === 'ADMIN' && <th className="px-6 py-4 font-medium text-muted-foreground">Ações</th>}
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
@@ -116,46 +146,84 @@ export function ClientsPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-muted-foreground">{lead.source}</td>
-                <td className="px-6 py-4 text-right">
-                  <button className="p-2 hover:bg-accent rounded-md text-muted-foreground">
-                    <MoreHorizontal size={16} />
-                  </button>
-                </td>
+                {user?.role === 'ADMIN' && (
+                    <td className="px-6 py-4">
+                        <div className="flex items-center gap-2">
+                            <button 
+                                onClick={() => openEditModal(lead)}
+                                className="p-2 hover:bg-accent rounded-md text-muted-foreground hover:text-primary transition-colors"
+                                title="Editar"
+                            >
+                                <Pencil size={16} />
+                            </button>
+                            <button 
+                                onClick={() => handleDelete(lead.id)}
+                                className="p-2 hover:bg-destructive/10 rounded-md text-muted-foreground hover:text-destructive transition-colors"
+                                title="Excluir"
+                            >
+                                <Trash size={16} />
+                            </button>
+                        </div>
+                    </td>
+                )}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
 
-      {/* Basic Modal Implementation */}
+     {/* Reuse Modal for Create/Edit */}
       {showNewLeadModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-card p-6 rounded-xl border border-border w-full max-w-md shadow-lg animate-in fade-in zoom-in-95 duration-200">
-                <h2 className="text-xl font-bold mb-4">Adicionar Novo Cliente</h2>
-                <form onSubmit={handleCreateLead} className="space-y-4">
+                <h2 className="text-xl font-bold mb-4">{editingLead ? 'Editar Cliente' : 'Adicionar Novo Cliente'}</h2>
+                <form onSubmit={handleCreateOrUpdateLead} className="space-y-4">
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Nome Completo</label>
-                        <input name="name" required className="w-full px-3 py-2 rounded-md border border-input bg-background" placeholder="Ex: João da Silva" />
+                        <input 
+                            name="name" 
+                            required 
+                            className="w-full px-3 py-2 rounded-md border border-input bg-background" 
+                            placeholder="Ex: João da Silva" 
+                            defaultValue={editingLead?.name}
+                        />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-sm font-medium">Telefone</label>
-                            <input name="phone" className="w-full px-3 py-2 rounded-md border border-input bg-background" placeholder="(11) 99999-9999" />
+                            <input 
+                                name="phone" 
+                                className="w-full px-3 py-2 rounded-md border border-input bg-background" 
+                                placeholder="(11) 99999-9999" 
+                                defaultValue={editingLead?.phone}
+                            />
                         </div>
                         <div className="space-y-2">
                             <label className="text-sm font-medium">Orçamento (R$)</label>
-                            <input name="budget" type="number" className="w-full px-3 py-2 rounded-md border border-input bg-background" placeholder="500000" />
+                            <input 
+                                name="budget" 
+                                type="number" 
+                                className="w-full px-3 py-2 rounded-md border border-input bg-background" 
+                                placeholder="500000" 
+                                defaultValue={editingLead?.budget}
+                            />
                         </div>
                     </div>
                     <div className="space-y-2">
                         <label className="text-sm font-medium">Email</label>
-                        <input name="email" type="email" className="w-full px-3 py-2 rounded-md border border-input bg-background" placeholder="joao@email.com" />
+                        <input 
+                            name="email" 
+                            type="email" 
+                            className="w-full px-3 py-2 rounded-md border border-input bg-background" 
+                            placeholder="joao@email.com" 
+                            defaultValue={editingLead?.email}
+                        />
                     </div>
                     
                     <div className="flex justify-end gap-3 mt-6">
                         <button 
                             type="button" 
-                            onClick={() => setShowNewLeadModal(false)}
+                            onClick={() => { setShowNewLeadModal(false); setEditingLead(null); }}
                             className="px-4 py-2 text-sm font-medium hover:bg-accent rounded-md transition-colors"
                         >
                             Cancelar
@@ -164,7 +232,7 @@ export function ClientsPage() {
                             type="submit" 
                             className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm font-medium hover:bg-primary/90"
                         >
-                            Salvar Cliente
+                            {editingLead ? 'Atualizar Cliente' : 'Salvar Cliente'}
                         </button>
                     </div>
                 </form>
