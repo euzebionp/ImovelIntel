@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put, Delete, UseGuards, Req } from '@nestjs/common';
 import { CrmService } from './crm.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('crm/leads')
 export class CrmController {
   constructor(private readonly crmService: CrmService) {}
 
   @Post()
-  create(@Body() createLeadDto: any) {
-    return this.crmService.createLead(createLeadDto);
+  @UseGuards(JwtAuthGuard)
+  create(@Body() createLeadDto: any, @Req() req) {
+    return this.crmService.createLead({ ...createLeadDto, userId: req.user.userId });
   }
 
   @Get()

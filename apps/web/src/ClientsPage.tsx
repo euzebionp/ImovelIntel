@@ -52,9 +52,10 @@ export function ClientsPage() {
         alert('Cliente cadastrado com sucesso!');
         setShowNewLeadModal(false);
         fetchLeads();
-    } catch (error) {
+    } catch (error: any) {
         console.error("Failed to create lead", error);
-        alert('Erro ao cadastrar cliente. Verifique o console.');
+        const errorMsg = error.response?.data?.message || 'Erro ao cadastrar cliente. Verifique o console.';
+        alert(`Erro: ${errorMsg}`);
     }
   };
 

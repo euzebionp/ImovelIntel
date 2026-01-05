@@ -1,0 +1,9 @@
+--- Debug Log ---
+--- Testing Authentication ---
+
+[1] Testing Admin Login (infoservicos@imovelintel.com)...
+SUCCESS: Admin logged in.
+Token received: YES
+
+[2] Testing Registration (test-1767635188620@example.com)...
+SUCCESS: User registered.

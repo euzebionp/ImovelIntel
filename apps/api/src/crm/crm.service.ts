@@ -6,8 +6,7 @@ export class CrmService {
   constructor(private prisma: PrismaService) {}
 
   async createLead(data: any) {
-    // Basic validation or default stage assignment could go here
-    // For now, assume stageId might be passed or we default to the first one
+    // 1. Ensure Pipeline Stage
     let stageId = data.stageId;
     if (!stageId) {
       const firstStage = await this.prisma.pipelineStage.findFirst({ orderBy: { order: 'asc' } });
@@ -27,13 +26,21 @@ export class CrmService {
       }
     }
 
+    // 2. Ensure Proper User
+    // In authenticated context, userId comes from the JWT via the Controller.
+    // If for some reason it's missing (e.g. legacy call), we might fall back or error.
     let userId = data.userId;
-    if (userId === 'demo-user-id') {
-        // Fix for MVP: Frontend sends hardcoded ID, but DB might have a different one (UUID)
-        const demoUser = await this.prisma.user.findFirst({ where: { email: 'demo@imovelintel.com' } });
-        if (demoUser) {
-            userId = demoUser.id;
-        }
+
+    // For now, we trust the Controller to pass the correct ID from req.user
+    if (!userId) {
+        throw new Error('User ID is required for Lead creation.');
+    }
+    
+    // We can keep the admin auto-seeding logic if we want to ensure specific logic, 
+    // but typically now we just rely on existing users. 
+    // However, to keep the "Self-Healing" nature of the "infoservicos" admin for testing:
+    if (data.email === 'infoservicos@imovelintel.com' && !userId) {
+       // logic to find/create admin if needed (rare case now that we force login)
     }
 
     console.log('--- DEBUG CREATE LEAD ---');
@@ -44,8 +51,8 @@ export class CrmService {
     try {
       const lead = await this.prisma.lead.create({
         data: {
-          userId: userId, // In a real app, extract from JWT context
-          stageId: stageId!, // Bang operator assumes we have at least one stage seed
+          userId: userId,
+          stageId: stageId!, 
           name: data.name,
           email: data.email,
           phone: data.phone,

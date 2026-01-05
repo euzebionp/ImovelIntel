@@ -6,7 +6,9 @@ import {
   Users, 
   Wallet, 
   Menu,
-  Bell
+  Bell,
+  LogOut,
+  UserPlus
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { cn } from './lib/utils';
@@ -14,6 +16,9 @@ import { api } from './lib/api';
 
 import { SearchPage } from './SearchPage';
 import { ClientsPage } from './ClientsPage';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { LoginPage } from './LoginPage';
+import { RegisterPage } from './RegisterPage';
 
 interface DashboardStats {
   totalSearches: number;
@@ -34,13 +39,17 @@ interface Recentactivity {
   status: string;
 }
 
-function App() {
+function AuthenticatedApp() {
+  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [recent, setRecent] = useState<Recentactivity[]>([]);
   const [loading, setLoading] = useState(true);
+
+  // If in admin creation mode (Settings)
+  const [showAdminRegister, setShowAdminRegister] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
@@ -60,6 +69,20 @@ function App() {
     fetchData();
   }, []);
 
+  if (showAdminRegister) {
+      return (
+          <div className="min-h-screen bg-background relative">
+              <button 
+                onClick={() => setShowAdminRegister(false)}
+                className="absolute top-4 left-4 z-50 bg-secondary px-4 py-2 rounded-lg"
+              >
+                  Voltar para o Painel
+              </button>
+              <RegisterPage onLoginClick={() => setShowAdminRegister(false)} />
+          </div>
+      );
+  }
+
   return (
     <div className="min-h-screen bg-background flex">
       {/* Sidebar */}
@@ -78,7 +101,7 @@ function App() {
           )}
         </div>
 
-        <nav className="p-4 space-y-2">
+        <nav className="p-4 space-y-2 flex flex-col h-[calc(100vh-80px)]">
           <NavItem 
             icon={<Home size={20} />} 
             label="Dashboard" 
@@ -108,7 +131,7 @@ function App() {
             onClick={() => setActiveTab('clients')}
           />
           
-          <div className="pt-8 mt-8 border-t border-border/50">
+          <div className="pt-4 mt-auto border-t border-border/50 space-y-2">
              <NavItem 
               icon={<Settings size={20} />} 
               label="Configurações" 
@@ -116,6 +139,15 @@ function App() {
               expanded={sidebarOpen}
               onClick={() => setActiveTab('settings')}
             />
+            <button 
+                onClick={logout}
+                className={cn(
+                    "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 w-full group relative text-destructive hover:bg-destructive/10"
+                )}
+            >
+                <div className={cn("shrink-0", !sidebarOpen && "mx-auto")}><LogOut size={20} /></div>
+                {sidebarOpen && <span className="font-medium whitespace-nowrap">Sair</span>}
+            </button>
           </div>
         </nav>
       </aside>
@@ -135,12 +167,16 @@ function App() {
           </button>
 
           <div className="flex items-center gap-4">
+             <div className="text-right hidden md:block">
+                 <p className="text-sm font-medium leading-none">{user?.name}</p>
+                 <p className="text-xs text-muted-foreground mt-1">{user?.role}</p>
+             </div>
              <button className="relative p-2 hover:bg-accent rounded-full text-muted-foreground transition-colors">
                <Bell size={20} />
                <span className="absolute top-2 right-2 h-2 w-2 bg-destructive rounded-full border-2 border-card"></span>
              </button>
-             <div className="h-8 w-8 rounded-full bg-secondary overflow-hidden border border-border">
-               <img src="https://ui-avatars.com/api/?name=Admin+User&background=random" alt="Avatar" />
+             <div className="h-8 w-8 rounded-full bg-secondary overflow-hidden border border-border flex items-center justify-center font-bold text-muted-foreground">
+               {user?.name.charAt(0).toUpperCase()}
              </div>
           </div>
         </header>
@@ -218,6 +254,37 @@ function App() {
           </>
           ) : activeTab === 'clients' ? (
             <ClientsPage />
+          ) : activeTab === 'settings' ? (
+              <div className="space-y-6">
+                  <h2 className="text-2xl font-bold">Configurações</h2>
+                  <div className="bg-card p-6 rounded-xl border border-border space-y-4">
+                      <h3 className="text-lg font-semibold">Conta</h3>
+                      <div className="flex items-center gap-4 p-4 border border-border rounded-lg bg-secondary/20">
+                           <div className="h-12 w-12 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-xl">
+                               {user?.name.charAt(0).toUpperCase()}
+                           </div>
+                           <div>
+                               <p className="font-medium">{user?.name}</p>
+                               <p className="text-sm text-muted-foreground">{user?.email}</p>
+                           </div>
+                           <div className="ml-auto">
+                               <span className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-md font-medium">{user?.role}</span>
+                           </div>
+                      </div>
+
+                      {user?.role === 'ADMIN' && (
+                          <div className="pt-4 border-t border-border">
+                              <h3 className="text-lg font-semibold mb-4">Administração</h3>
+                              <button 
+                                onClick={() => setShowAdminRegister(true)}
+                                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                              >
+                                  <UserPlus size={18} /> Cadastrar Novo Usuário/Admin
+                              </button>
+                          </div>
+                      )}
+                  </div>
+              </div>
           ) : (
             <div className="text-center py-20 text-muted-foreground">
               <p>Funcionalidade "{activeTab}" em desenvolvimento.</p>
@@ -286,4 +353,28 @@ function StatCard({ title, value, change, icon }: { title: string, value: string
   )
 }
 
-export default App
+function AppContent() {
+    const { isAuthenticated, isLoading } = useAuth();
+    const [isRegistering, setIsRegistering] = useState(false);
+
+    if (isLoading) {
+        return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full"></div></div>;
+    }
+
+    if (!isAuthenticated) {
+        if (isRegistering) {
+            return <RegisterPage onLoginClick={() => setIsRegistering(false)} />;
+        }
+        return <LoginPage onRegisterClick={() => setIsRegistering(true)} />;
+    }
+
+    return <AuthenticatedApp />;
+}
+
+export default function App() {
+    return (
+        <AuthProvider>
+            <AppContent />
+        </AuthProvider>
+    );
+}
