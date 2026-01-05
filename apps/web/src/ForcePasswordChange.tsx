@@ -5,7 +5,7 @@ import { api } from './lib/api';
 import { Loader2, Lock, LogOut } from 'lucide-react';
 
 export function ForcePasswordChange() {
-  const { user, logout, login } = useAuth(); // Need login to update user state if successful without full re-login, OR just logout.
+  const { logout } = useAuth(); // Need login to update user state if successful without full re-login, OR just logout.
   // Actually, easiest way to update "mustChangePassword" in context is to re-fetch user or just patch local state if possible.
   // AuthContext might not expose a "updateUser" method.
   // If we just logout/login it works. OR we can just reload the page/ fetch profile.

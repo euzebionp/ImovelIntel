@@ -164,7 +164,7 @@ export function RegisterPage({ onLoginClick }: { onLoginClick: () => void }) {
                                 name="role" 
                                 value="USER" 
                                 checked={formData.role === 'USER'} 
-                                onChange={e => setFormData({...formData, role: 'USER'})}
+                                onChange={() => setFormData({...formData, role: 'USER'})}
                             />
                             <span>Usuário</span>
                         </label>
@@ -174,7 +174,7 @@ export function RegisterPage({ onLoginClick }: { onLoginClick: () => void }) {
                                 name="role" 
                                 value="ADMIN" 
                                 checked={formData.role === 'ADMIN'} 
-                                onChange={e => setFormData({...formData, role: 'ADMIN'})} // TypeScript might complain if state is typed strictly
+                                onChange={() => setFormData({...formData, role: 'ADMIN'})} // TypeScript might complain if state is typed strictly
                             />
                             <span className="font-semibold text-primary">Administrador</span>
                         </label>

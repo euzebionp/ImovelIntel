@@ -1,0 +1,5 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/$USER/repositories/imovel
+    - /bin/cp -R * $DEPLOYPATH

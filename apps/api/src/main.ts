@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({
-    origin: 'http://localhost:5173', // Explicitly allow Frontend URL
+    origin: ['http://localhost:5173', 'https://imovelintel.online', 'https://www.imovelintel.online'], // Explicitly allow Frontend URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });

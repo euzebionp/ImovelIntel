@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { api } from './lib/api';
-import { Loader2, Trash2, UserCog, Check, X, ShieldAlert, Shield, KeyRound } from 'lucide-react';
+import { Loader2, Trash2, UserCog, ShieldAlert, Shield, KeyRound } from 'lucide-react';
 import { useAuth } from './contexts/AuthContext';
 
 interface User {
