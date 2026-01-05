@@ -13,6 +13,7 @@ import { cn } from './lib/utils';
 import { api } from './lib/api';
 
 import { SearchPage } from './SearchPage';
+import { ClientsPage } from './ClientsPage';
 
 interface DashboardStats {
   totalSearches: number;
@@ -215,6 +216,8 @@ function App() {
              </div>
           </div>
           </>
+          ) : activeTab === 'clients' ? (
+            <ClientsPage />
           ) : (
             <div className="text-center py-20 text-muted-foreground">
               <p>Funcionalidade "{activeTab}" em desenvolvimento.</p>

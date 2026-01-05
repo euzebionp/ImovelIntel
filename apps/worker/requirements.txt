@@ -6,3 +6,4 @@ sqlalchemy
 redis
 pydantic-settings
 httpx
+reportlab

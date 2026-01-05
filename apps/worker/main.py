@@ -1,4 +1,5 @@
 from fastapi import FastAPI, BackgroundTasks
+print("Files Loaded... Starting Main.py")
 from pydantic import BaseModel
 import asyncio
 import logging
@@ -20,6 +21,12 @@ logging.basicConfig(
 logger = logging.getLogger("scraper-worker")
 
 app = FastAPI()
+
+# Mount Static Files for Reports
+from fastapi.staticfiles import StaticFiles
+import os
+os.makedirs("reports", exist_ok=True)
+app.mount("/reports", StaticFiles(directory="reports"), name="reports")
 
 # Database Setup
 # FIX: Use absolute path to ensure we hit the same DB as the API
@@ -57,6 +64,22 @@ async def run_scraper(search_id: str, address: str):
         bureau_provider = BureauProvider()
         bureau_result = await bureau_provider.search(address)
         
+        # 3. Intelligence & Reporting
+        from intelligence import IntelligenceService
+        from reports import ReportService
+        
+        intel_data = IntelligenceService.calculate_health_score(
+            geo_result.get('data', {}),
+            bureau_result.get('data', {})
+        )
+        
+        pdf_filename = ReportService.generate_pdf(
+            search_id,
+            address,
+            intel_data,
+            bureau_result.get('data', {})
+        )
+
         # Merge Results
         full_address = geo_result.get('data', {}).get('display_name', address)
         owner_data = bureau_result.get('data', {}).get('owner', {})
@@ -71,6 +94,8 @@ async def run_scraper(search_id: str, address: str):
                 "name": owner_data.get('name', 'Desconhecido'),
                 "cpf": owner_data.get('cpf_masked', '***')
             },
+            "intelligence": intel_data,
+            "report_url": f"/reports/{pdf_filename}", # We will need to serve this static file
             "details": {
                 "geo": geo_result.get('data'),
                 "bureau": bureau_result.get('data')

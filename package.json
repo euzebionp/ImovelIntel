@@ -1,0 +1,12 @@
+{
+  "name": "imovel-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start:api": "npm run start:dev --prefix apps/api",
+    "start:web": "npm run dev --prefix apps/web",
+    "start:worker": "cd apps/worker && python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload",
+    "start:dev": "npm run start:dev --prefix apps/api",
+    "install:all": "npm install --prefix apps/api && npm install --prefix apps/web"
+  }
+}

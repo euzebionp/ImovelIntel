@@ -20,17 +20,18 @@ model User {
   wallet        CreditWallet?
   searchHistory SearchHistory[]
   dataUnlocks   DataUnlock[]
+  Lead          Lead[]
 
   @@map("users")
 }
 
 model CreditWallet {
-  id          String   @id @default(uuid())
-  userId      String   @unique @map("user_id")
-  balance     Int      @default(0)
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id           String              @id @default(uuid())
+  userId       String              @unique @map("user_id")
+  balance      Int                 @default(0)
+  updatedAt    DateTime            @updatedAt @map("updated_at")
   transactions CreditTransaction[]
-  user        User     @relation(fields: [userId], references: [id])
+  user         User                @relation(fields: [userId], references: [id])
 
   @@map("credit_wallets")
 }
@@ -40,7 +41,7 @@ model CreditTransaction {
   walletId        String   @map("wallet_id")
   amount          Int
   description     String?
-  transactionType String  @map("transaction_type")
+  transactionType String   @map("transaction_type")
   createdAt       DateTime @default(now()) @map("created_at")
 
   wallet CreditWallet @relation(fields: [walletId], references: [id])
@@ -59,14 +60,29 @@ model Property {
   cartorioName       String?   @map("cartorio_name")
   latitude           Decimal?
   longitude          Decimal?
-  status             String         @default("PENDING")
+  status             String    @default("PENDING")
   lastEnrichedAt     DateTime? @map("last_enriched_at")
-  createdAt          DateTime  @default(now()) @map("created_at")
-  updatedAt          DateTime  @updatedAt @map("updated_at")
+  // Listing Details
+  type               String?   @default("Residential") // Residential, Commercial
+  subType            String? // Apartment, House, Land
+  price              Decimal?
+  priceCondo         Decimal?  @map("price_condo")
+  priceIptu          Decimal?  @map("price_iptu")
+  areaUsable         Decimal?  @map("area_usable")
+  areaTotal          Decimal?  @map("area_total")
+  bedrooms           Int?
+  bathrooms          Int?
+  parkingSpaces      Int?      @map("parking_spaces")
+  description        String?
+  images             String? // JSON string of image URLs
 
-  owners        Owner[]
-  searchHistory SearchHistory[]
-  dataUnlocks   DataUnlock[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  owners           Owner[]
+  searchHistory    SearchHistory[]
+  dataUnlocks      DataUnlock[]
+  PropertyInterest PropertyInterest[]
 
   @@map("properties")
 }
@@ -88,7 +104,7 @@ model Owner {
 model OwnerContact {
   id                    String   @id @default(uuid())
   ownerId               String   @map("owner_id")
-  contactType           String      @map("contact_type")
+  contactType           String   @map("contact_type")
   contactValueEncrypted String   @map("contact_value_encrypted")
   contactValueMasked    String   @map("contact_value_masked")
   source                String?
@@ -107,7 +123,7 @@ model SearchHistory {
   searchTerm    String?  @map("search_term")
   propertyId    String?  @map("property_id")
   status        String
-  resultSummary String?    @map("result_summary")
+  resultSummary String?  @map("result_summary")
   createdAt     DateTime @default(now()) @map("created_at")
 
   user     User      @relation(fields: [userId], references: [id])
@@ -131,4 +147,64 @@ model DataUnlock {
   ownerContact OwnerContact? @relation(fields: [ownerContactId], references: [id])
 
   @@map("data_unlocks")
+}
+
+// CRM MODULE
+
+model PipelineStage {
+  id    String  @id @default(uuid())
+  order Int
+  name  String
+  type  String  @default("OPEN") // OPEN, WON, LOST
+  color String?
+
+  leads Lead[]
+
+  @@map("pipeline_stages")
+}
+
+model Lead {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  stageId   String   @map("stage_id")
+  name      String
+  email     String?
+  phone     String?
+  budget    Decimal?
+  source    String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user         User               @relation(fields: [userId], references: [id])
+  stage        PipelineStage      @relation(fields: [stageId], references: [id])
+  interactions LeadInteraction[]
+  interests    PropertyInterest[]
+
+  @@map("leads")
+}
+
+model LeadInteraction {
+  id        String   @id @default(uuid())
+  leadId    String   @map("lead_id")
+  type      String // CALL, NOTE, MEETING, EMAIL, WHATSAPP, SYSTEM
+  content   String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  lead Lead @relation(fields: [leadId], references: [id])
+
+  @@map("lead_interactions")
+}
+
+model PropertyInterest {
+  id         String   @id @default(uuid())
+  leadId     String   @map("lead_id")
+  propertyId String   @map("property_id")
+  status     String? // INTERESTED, VISITED, OFFER_MADE, REJECTED
+  notes      String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  lead     Lead     @relation(fields: [leadId], references: [id])
+  property Property @relation(fields: [propertyId], references: [id])
+
+  @@map("property_interests")
 }
