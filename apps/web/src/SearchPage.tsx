@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Loader2, MapPin, Building } from 'lucide-react';
+import { Search, Loader2, Building } from 'lucide-react';
 import { api } from './lib/api';
 
 export function SearchPage() {
