@@ -7,3 +7,5 @@ build
 *.db
 .DS_Store
 worker.log
+*.log
+debug-auth.ts

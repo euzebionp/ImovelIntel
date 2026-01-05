@@ -1,5 +1,5 @@
 
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { PrismaService } from '../prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
@@ -31,7 +31,8 @@ export class AuthService {
           id: user.id,
           email: user.email,
           role: user.role,
-          name: user.fullName
+          name: user.fullName,
+          mustChangePassword: user.mustChangePassword
       }
     };
   }
@@ -39,21 +40,26 @@ export class AuthService {
   async register(data: any, isAdminCreate: boolean = false) {
      const existing = await this.prisma.user.findUnique({ where: { email: data.email }});
      if (existing) {
-         throw new Error('User already exists');
+         throw new ConflictException('User already exists');
      }
 
      const salt = 10;
      const hash = await bcrypt.hash(data.password, salt);
      const role = isAdminCreate && data.role === 'ADMIN' ? 'ADMIN' : 'USER';
 
-     return this.prisma.user.create({
-         data: {
-             email: data.email,
-             passwordHash: hash,
-             fullName: data.fullName,
-             role: role,
-             wallet: { create: { balance: 0 } }
-         }
-     });
+     try {
+       return await this.prisma.user.create({
+           data: {
+               email: data.email,
+               passwordHash: hash,
+               fullName: data.fullName,
+               role: role,
+               wallet: { create: { balance: 0 } }
+           }
+       });
+     } catch (error) {
+       console.error('Error creating user:', error);
+       throw new Error('Failed to create user');
+     }
   }
 }

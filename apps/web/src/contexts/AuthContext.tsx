@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import { api } from '../lib/api';
 
 interface User {
@@ -7,6 +7,7 @@ interface User {
   email: string;
   name: string;
   role: 'USER' | 'ADMIN';
+  mustChangePassword?: boolean;
 }
 
 interface AuthContextType {

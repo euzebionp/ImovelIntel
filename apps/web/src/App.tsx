@@ -19,6 +19,8 @@ import { ClientsPage } from './ClientsPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { LoginPage } from './LoginPage';
 import { RegisterPage } from './RegisterPage';
+import { UsersPage } from './UsersPage';
+import { ForcePasswordChange } from './ForcePasswordChange';
 
 interface DashboardStats {
   totalSearches: number;
@@ -41,6 +43,11 @@ interface Recentactivity {
 
 function AuthenticatedApp() {
   const { user, logout } = useAuth();
+
+  if (user?.mustChangePassword) {
+    return <ForcePasswordChange />;
+  }
+
   const [activeTab, setActiveTab] = useState('dashboard');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   
@@ -132,6 +139,15 @@ function AuthenticatedApp() {
           />
           
           <div className="pt-4 mt-auto border-t border-border/50 space-y-2">
+             {user?.role === 'ADMIN' && (
+                <NavItem 
+                  icon={<Users size={20} />} 
+                  label="Usuários" 
+                  isActive={activeTab === 'users'} 
+                  expanded={sidebarOpen}
+                  onClick={() => setActiveTab('users')}
+                />
+             )}
              {user?.role === 'ADMIN' && (
                <NavItem 
                 icon={<Settings size={20} />} 
@@ -256,6 +272,8 @@ function AuthenticatedApp() {
           </>
           ) : activeTab === 'clients' ? (
             <ClientsPage />
+          ) : activeTab === 'users' ? (
+            <UsersPage />
           ) : activeTab === 'settings' ? (
               <div className="space-y-6">
                   <h2 className="text-2xl font-bold">Configurações</h2>
