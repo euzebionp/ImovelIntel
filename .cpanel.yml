@@ -4,6 +4,6 @@ deployment:
     # Defina o caminho correto do seu diretório público (ex: public_html para domínio principal)
     - export DEPLOYPATH=/home/$USER/public_html
 
-    # Copia os ARQUIVOS COMPILADOS (dist) para o diretório público.
-    # Isso requer que a pasta 'dist' tenha sido commitada no repositório.
-    - /bin/cp -R apps/web/dist/* $DEPLOYPATH
+    # Copia TODO o conteúdo de 'dist', incluindo arquivos ocultos (.htaccess)
+    # A sintaxe 'dist/.' é mais segura para incluir arquivos que começam com ponto.
+    - /bin/cp -a apps/web/dist/. $DEPLOYPATH/
