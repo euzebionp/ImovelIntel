@@ -3,16 +3,16 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/$USER/public_html
 
-    # Copia o index.html para o ARQUIVO index.html na raiz (Forçar destino)
+    # Copia o index.html
     - /bin/cp -f apps/web/dist/index.html $DEPLOYPATH/index.html
     
-    # Copia o .htaccess
-    - /bin/cp -f apps/web/public/.htaccess $DEPLOYPATH/.htaccess
+    # Copia o .htaccess da pasta DIST (onde confirmamos que ele está)
+    - /bin/cp -f apps/web/dist/.htaccess $DEPLOYPATH/.htaccess
     
-    # Copia a pasta assets (conteúdo)
+    # Copia a pasta assets
     - /bin/cp -rf apps/web/dist/assets $DEPLOYPATH/
     
-    # Permissões Finais
+    # Permissões
     - /bin/chmod 755 $DEPLOYPATH
     - /usr/bin/find $DEPLOYPATH -type f -exec chmod 644 {} \;
     - /usr/bin/find $DEPLOYPATH -type d -exec chmod 755 {} \;
