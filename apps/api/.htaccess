@@ -1,0 +1,11 @@
+# DO NOT HAND EDIT THIS FILE
+# It is typically managed by cPanel "Setup Node.js App"
+# But ensures basic routing if manual configuration is attempted
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^$ http://127.0.0.1:%{ENV:PORT}/ [P,L]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ http://127.0.0.1:%{ENV:PORT}/$1 [P,L]
+</IfModule>
