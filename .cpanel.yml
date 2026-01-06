@@ -1,15 +1,17 @@
 ---
 deployment:
   tasks:
-    # Defina o caminho correto do seu diretório público
     - export DEPLOYPATH=/home/$USER/public_html
 
-    # Copia os arquivos (incluindo ocultos)
-    - /bin/cp -a apps/web/dist/. $DEPLOYPATH/
-
-    # --- CORREÇÃO DE PERMISSÕES (CRÍTICO PARA ERRO 403) ---
-    # Define permissão 755 para pastas (acesso público)
-    - /usr/bin/find $DEPLOYPATH -type d -exec chmod 755 {} \;
+    # Copia arquivos cruciais explicitamente para garantir que não sejam esquecidos
+    - /bin/cp -f apps/web/dist/index.html $DEPLOYPATH/
+    - /bin/cp -f apps/web/public/.htaccess $DEPLOYPATH/
+    - /bin/cp -rf apps/web/dist/assets $DEPLOYPATH/
     
-    # Define permissão 644 para arquivos (leitura pública)
+    # Se existir o arquivo de teste, copia também
+    - /bin/cp -f apps/web/public/test.html $DEPLOYPATH/
+
+    # Garante as permissões corretas (HostGator exige isso)
+    - /bin/chmod 755 $DEPLOYPATH
     - /usr/bin/find $DEPLOYPATH -type f -exec chmod 644 {} \;
+    - /usr/bin/find $DEPLOYPATH -type d -exec chmod 755 {} \;
