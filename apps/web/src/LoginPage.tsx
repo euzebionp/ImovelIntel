@@ -26,7 +26,7 @@ export function LoginPage() {
     }
   };
 
-  return 
+  return (
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* Left: Branding */}
       <div className="bg-zinc-900 border-r border-border p-12 flex flex-col justify-between relative overflow-hidden">
@@ -123,5 +123,5 @@ export function LoginPage() {
         </div>
       </div>
     </div>
-  ;
+  );
 }
