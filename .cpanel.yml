@@ -1,15 +1,12 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/$USER/public_html
+    # AQUI ESTAVA O ERRO! O log mostrou que a pasta certa não é public_html
+    - export DEPLOYPATH=/home/$USER/imovelintel.online
 
-    # Copia o index.html
+    # Copia os arquivos para a pasta CORRETA
     - /bin/cp -f apps/web/dist/index.html $DEPLOYPATH/index.html
-    
-    # Copia o .htaccess da pasta DIST (onde confirmamos que ele está)
     - /bin/cp -f apps/web/dist/.htaccess $DEPLOYPATH/.htaccess
-    
-    # Copia a pasta assets
     - /bin/cp -rf apps/web/dist/assets $DEPLOYPATH/
     
     # Permissões
