@@ -15,13 +15,14 @@ const feed_module_1 = require("./feed/feed.module");
 const prisma_module_1 = require("./prisma/prisma.module");
 const auth_module_1 = require("./auth/auth.module");
 const users_module_1 = require("./users/users.module");
+const app_controller_1 = require("./app.controller");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [prisma_module_1.PrismaModule, search_module_1.SearchModule, crm_module_1.CrmModule, feed_module_1.FeedModule, auth_module_1.AuthModule, users_module_1.UsersModule],
-        controllers: [dashboard_controller_1.DashboardController],
+        controllers: [dashboard_controller_1.DashboardController, app_controller_1.AppController],
         providers: [],
     })
 ], AppModule);

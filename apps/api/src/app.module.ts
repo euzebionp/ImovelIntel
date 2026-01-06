@@ -9,9 +9,11 @@ import { AuthModule } from './auth/auth.module';
 
 import { UsersModule } from './users/users.module';
 
+import { AppController } from './app.controller';
+
 @Module({
   imports: [PrismaModule, SearchModule, CrmModule, FeedModule, AuthModule, UsersModule],
-  controllers: [DashboardController],
+  controllers: [DashboardController, AppController],
   providers: [],
 })
 export class AppModule {}
