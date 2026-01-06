@@ -26,7 +26,7 @@ export function LoginPage() {
     }
   };
 
-  return (
+  return 
     <div className="min-h-screen grid lg:grid-cols-2">
       {/* Left: Branding */}
       <div className="bg-zinc-900 border-r border-border p-12 flex flex-col justify-between relative overflow-hidden">
@@ -101,18 +101,27 @@ export function LoginPage() {
 
           <div className="text-center text-sm">
             <span className="text-muted-foreground">Não tem uma conta? </span>
-            <a 
-              href="https://wa.me/5534998632929, 5534991673559" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="font-medium text-emerald-600 hover:text-emerald-700 hover:underline flex items-center justify-center gap-2 mt-2"
-            >
-              Falar com o consultor Euzébio Borges
-              Falar com o consultor Lucas Castro
-            </a>
+            <div className="flex flex-col gap-2 mt-2">
+              <a 
+                href="https://wa.me/5534998632929"
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="font-medium text-emerald-600 hover:text-emerald-700 hover:underline flex items-center justify-center gap-2"
+              >
+                Falar com o consultor Euzébio Borges
+              </a>
+              <a 
+                href="https://wa.me/5534991673559" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="font-medium text-emerald-600 hover:text-emerald-700 hover:underline flex items-center justify-center gap-2"
+              >
+                Falar com o consultor Lucas Almeida
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  );
+  ;
 }
