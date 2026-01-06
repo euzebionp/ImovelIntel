@@ -1,9 +1,15 @@
 ---
 deployment:
   tasks:
-    # Defina o caminho correto do seu diretório público (ex: public_html para domínio principal)
+    # Defina o caminho correto do seu diretório público
     - export DEPLOYPATH=/home/$USER/public_html
 
-    # Copia TODO o conteúdo de 'dist', incluindo arquivos ocultos (.htaccess)
-    # A sintaxe 'dist/.' é mais segura para incluir arquivos que começam com ponto.
+    # Copia os arquivos (incluindo ocultos)
     - /bin/cp -a apps/web/dist/. $DEPLOYPATH/
+
+    # --- CORREÇÃO DE PERMISSÕES (CRÍTICO PARA ERRO 403) ---
+    # Define permissão 755 para pastas (acesso público)
+    - /usr/bin/find $DEPLOYPATH -type d -exec chmod 755 {} \;
+    
+    # Define permissão 644 para arquivos (leitura pública)
+    - /usr/bin/find $DEPLOYPATH -type f -exec chmod 644 {} \;
