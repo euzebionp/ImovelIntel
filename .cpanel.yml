@@ -3,15 +3,16 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/$USER/public_html
 
-    # Copia arquivos cruciais explicitamente para garantir que não sejam esquecidos
-    - /bin/cp -f apps/web/dist/index.html $DEPLOYPATH/
-    - /bin/cp -f apps/web/public/.htaccess $DEPLOYPATH/
+    # Copia o index.html para o ARQUIVO index.html na raiz (Forçar destino)
+    - /bin/cp -f apps/web/dist/index.html $DEPLOYPATH/index.html
+    
+    # Copia o .htaccess
+    - /bin/cp -f apps/web/public/.htaccess $DEPLOYPATH/.htaccess
+    
+    # Copia a pasta assets (conteúdo)
     - /bin/cp -rf apps/web/dist/assets $DEPLOYPATH/
     
-    # Se existir o arquivo de teste, copia também
-    - /bin/cp -f apps/web/public/test.html $DEPLOYPATH/
-
-    # Garante as permissões corretas (HostGator exige isso)
+    # Permissões Finais
     - /bin/chmod 755 $DEPLOYPATH
     - /usr/bin/find $DEPLOYPATH -type f -exec chmod 644 {} \;
     - /usr/bin/find $DEPLOYPATH -type d -exec chmod 755 {} \;
