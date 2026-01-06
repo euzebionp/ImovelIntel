@@ -102,12 +102,13 @@ export function LoginPage() {
           <div className="text-center text-sm">
             <span className="text-muted-foreground">Não tem uma conta? </span>
             <a 
-              href="https://wa.me/5534998632929" 
+              href="https://wa.me/5534998632929, 5534991673559" 
               target="_blank" 
               rel="noopener noreferrer" 
               className="font-medium text-emerald-600 hover:text-emerald-700 hover:underline flex items-center justify-center gap-2 mt-2"
             >
               Falar com o consultor Euzébio Borges
+              Falar com o consultor Lucas Castro
             </a>
           </div>
         </div>
