@@ -2,13 +2,8 @@
 deployment:
   tasks:
     # Defina o caminho correto do seu diretório público (ex: public_html para domínio principal)
-    # Substitua 'user' pelo seu usuário do cPanel se $USER não funcionar corretamente
     - export DEPLOYPATH=/home/$USER/public_html
 
-    # Copia os arquivos da aplicação web para o diretório público.
-    # NOTA: O Vite requer build. Se não houver build no servidor, você precisará rodar localmente e commitar a pasta 'dist'.
-    # Opção A: Copiar tudo (Risco de segurança - expõe código do backend)
-    #- /bin/cp -R * $DEPLOYPATH
-    
-    # Opção B: Copiar apenas a pasta do frontend (Mais seguro, mas requer que o servidor sirva essa pasta)
-    - /bin/cp -R apps/web/* $DEPLOYPATH
+    # Copia os ARQUIVOS COMPILADOS (dist) para o diretório público.
+    # Isso requer que a pasta 'dist' tenha sido commitada no repositório.
+    - /bin/cp -R apps/web/dist/* $DEPLOYPATH
