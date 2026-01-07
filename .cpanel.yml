@@ -1,22 +1,5 @@
 ---
 deployment:
   tasks:
-    # --- DEPLOY FRONTEND (SITE) ---
-    - export FRONT_PATH=/home/$USER/imovelintel.online
-    - /bin/cp -f apps/web/dist/index.html $FRONT_PATH/index.html
-    - /bin/cp -f apps/web/dist/.htaccess $FRONT_PATH/.htaccess
-    - /bin/cp -rf apps/web/dist/assets $FRONT_PATH/
-    # Permissões Frontend
-    - /usr/bin/find $FRONT_PATH -type f -exec chmod 644 {} \;
-    - /usr/bin/find $FRONT_PATH -type d -exec chmod 755 {} \;
-
-    # --- DEPLOY BACKEND (API) ---
-    - export API_PATH=/home/$USER/api.imovelintel.online
-    # Copia o código compilado da API
-    - /bin/cp -rf apps/api/dist $API_PATH/
-    # Copia definições vitais (dependências e banco)
-    - /bin/cp -f apps/api/package.json $API_PATH/
-    - /bin/cp -rf apps/api/prisma $API_PATH/
-    # Permissões Backend
-    - /usr/bin/find $API_PATH -type f -exec chmod 644 {} \;
-    - /usr/bin/find $API_PATH -type d -exec chmod 755 {} \;
+    - export DEPLOYPATH=/home2/euzebi67/imovelintel.online/
+    - /bin/cp -R apps/web/dist/* $DEPLOYPATH
