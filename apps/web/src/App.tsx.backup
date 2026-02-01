@@ -93,7 +93,9 @@ function AuthenticatedApp() {
 
   return (
     <>
+      {/* Futuristic Background */}
       <div className="futuristic-bg"></div>
+      
       <div className="min-h-screen flex relative z-10">
       {/* Sidebar */}
       <aside 
@@ -182,7 +184,7 @@ function AuthenticatedApp() {
         <header className="h-16 header-futuristic sticky top-0 z-40 px-8 flex items-center justify-between">
           <button 
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 hover:bg-white/10 rounded-md transition-colors text-white/80 hover:text-white"
+            className="p-2 hover:bg-accent rounded-md transition-colors text-white/80 hover:text-white"
           >
             <Menu size={20} />
           </button>
@@ -209,47 +211,47 @@ function AuthenticatedApp() {
           ) : activeTab === 'dashboard' ? (
             <>
               <div className="mb-8">
-                <h1 className="text-4xl font-bold tracking-tight text-white">Visão Geral</h1>
-                <p className="mt-2 text-lg" style={{ color: 'rgba(255, 255, 255, 0.85)' }}>Bem-vindo ao painel de inteligência imobiliária.</p>
+                <h1 className="text-3xl font-bold tracking-tight text-foreground">Visão Geral</h1>
+                <p className="text-muted-foreground mt-1">Bem-vindo ao painel de inteligência imobiliária.</p>
               </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {loading ? (
                Array(4).fill(0).map((_, i) => (
-                 <div key={i} className="h-40 stat-card-futuristic rounded-xl animate-pulse"></div>
+                 <div key={i} className="h-32 bg-secondary/50 rounded-xl animate-pulse"></div>
                ))
             ) : stats ? (
               <>
-                <StatCard title="Total de Buscas" value={stats.totalSearches.toString()} change={stats.searchesChange} icon={<Search className="text-blue-400 icon-glow" />} gradient="gradient-blue" />
-                <StatCard title="Imóveis Encontrados" value={stats.propertiesFound.toString()} change={stats.propertiesChange} icon={<Building2 className="text-violet-400 icon-glow" />} gradient="gradient-violet" />
-                <StatCard title="Créditos Disponíveis" value={`R$ ${stats.creditsAvailable.toFixed(2)}`} change={stats.creditsChange} icon={<Wallet className="text-emerald-400 icon-glow" />} gradient="gradient-emerald" />
-                <StatCard title="Novos Clientes" value={stats.newClients.toString()} change={stats.clientsChange} icon={<Users className="text-orange-400 icon-glow" />} gradient="gradient-orange" />
+                <StatCard title="Total de Buscas" value={stats.totalSearches.toString()} change={stats.searchesChange} icon={<Search className="text-blue-500" />} />
+                <StatCard title="Imóveis Encontrados" value={stats.propertiesFound.toString()} change={stats.propertiesChange} icon={<Building2 className="text-violet-500" />} />
+                <StatCard title="Créditos Disponíveis" value={`R$ ${stats.creditsAvailable.toFixed(2)}`} change={stats.creditsChange} icon={<Wallet className="text-emerald-500" />} />
+                <StatCard title="Novos Clientes" value={stats.newClients.toString()} change={stats.clientsChange} icon={<Users className="text-orange-500" />} />
               </>
             ) : null}
           </div>
 
           {/* Recent Activity */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-             <div className="lg:col-span-2 glass-card rounded-xl p-6 shadow-lg">
-               <h3 className="font-semibold text-xl mb-6 text-white">Buscas Recentes</h3>
+             <div className="lg:col-span-2 bg-card rounded-xl border border-border p-6 shadow-sm">
+               <h3 className="font-semibold text-lg mb-4">Buscas Recentes</h3>
                <div className="space-y-4">
                  {loading ? (
                     Array(3).fill(0).map((_, i) => (
-                      <div key={i} className="h-20 activity-item-futuristic rounded-lg animate-pulse"></div>
+                      <div key={i} className="h-20 bg-secondary/50 rounded-lg animate-pulse"></div>
                     ))
                  ) : recent.map((item) => (
-                   <div key={item.id} className="activity-item-futuristic flex items-center justify-between p-4 rounded-lg cursor-pointer group">
+                   <div key={item.id} className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors cursor-pointer group">
                      <div className="flex items-center gap-4">
-                       <div className="h-10 w-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-blue-500/50 transition-colors">
-                         <Search size={18} className="text-blue-400 group-hover:text-blue-300 icon-glow" />
+                       <div className="h-10 w-10 rounded-full bg-background flex items-center justify-center border border-border group-hover:border-primary/50 transition-colors">
+                         <Search size={18} className="text-muted-foreground group-hover:text-primary" />
                        </div>
                        <div>
-                         <p className="font-medium text-white">{item.address}</p>
-                         <p className="text-sm text-white/50">Há {item.time} • {item.city}</p>
+                         <p className="font-medium text-foreground">{item.address}</p>
+                         <p className="text-sm text-muted-foreground">Há {item.time} • {item.city}</p>
                        </div>
                      </div>
-                     <span className="text-xs font-medium px-3 py-1.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                     <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-400">
                        {item.status}
                      </span>
                    </div>
@@ -257,17 +259,17 @@ function AuthenticatedApp() {
                </div>
              </div>
 
-             <div className="glass-card rounded-xl p-6 shadow-lg">
-               <h3 className="font-semibold text-xl mb-6 text-white">Acesso Rápido</h3>
+             <div className="bg-card rounded-xl border border-border p-6 shadow-sm">
+               <h3 className="font-semibold text-lg mb-4">Acesso Rápido</h3>
                <div className="space-y-3">
-                 <button className="btn-futuristic w-full text-left px-4 py-3 rounded-lg text-white font-medium flex items-center gap-3">
-                    <Search size={18} className="icon-glow" /> Nova Busca CPF
+                 <button className="w-full text-left px-4 py-3 rounded-lg border border-border hover:bg-accent transition-colors flex items-center gap-3">
+                    <Search size={18} /> Nova Busca CPF
                  </button>
-                 <button className="btn-futuristic w-full text-left px-4 py-3 rounded-lg text-white font-medium flex items-center gap-3">
-                    <Building2 size={18} className="icon-glow" /> Nova Busca Matrícula
+                 <button className="w-full text-left px-4 py-3 rounded-lg border border-border hover:bg-accent transition-colors flex items-center gap-3">
+                    <Building2 size={18} /> Nova Busca Matrícula
                  </button>
-                 <button className="btn-futuristic w-full text-left px-4 py-3 rounded-lg text-white font-medium flex items-center gap-3">
-                    <Wallet size={18} className="icon-glow" /> Adicionar Créditos
+                 <button className="w-full text-left px-4 py-3 rounded-lg border border-border hover:bg-accent transition-colors flex items-center gap-3">
+                    <Wallet size={18} /> Adicionar Créditos
                  </button>
                </div>
              </div>
@@ -316,7 +318,6 @@ function AuthenticatedApp() {
         </div>
       </main>
     </div>
-    </>
   )
 }
 
@@ -352,26 +353,26 @@ function NavItem({ icon, label, isActive, expanded, onClick }: {
   )
 }
 
-function StatCard({ title, value, change, icon, gradient }: { title: string, value: string, change: string, icon: React.ReactNode, gradient?: string }) {
+function StatCard({ title, value, change, icon }: { title: string, value: string, change: string, icon: React.ReactNode }) {
   const isPositive = change.startsWith('+');
   return (
-    <div className={cn("stat-card-futuristic p-6 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-500", gradient)}>
+    <div className="bg-card p-6 rounded-xl border border-border shadow-sm hover:shadow-md transition-all duration-300">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <p className="text-sm font-medium text-white/70">{title}</p>
-          <h3 className="text-3xl font-bold mt-2 text-white">{value}</h3>
+          <p className="text-sm font-medium text-muted-foreground">{title}</p>
+          <h3 className="text-2xl font-bold mt-1 text-foreground">{value}</h3>
         </div>
-        <div className="h-12 w-12 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
+        <div className="h-10 w-10 rounded-full bg-secondary/50 flex items-center justify-center">
           {icon}
         </div>
       </div>
       <div className="flex items-center gap-1 text-xs font-medium">
         <span className={cn(
-          isPositive ? "text-emerald-400" : "text-rose-400"
+          isPositive ? "text-emerald-600" : "text-rose-600"
         )}>
           {change}
         </span>
-        <span className="text-white/50">desde o último mês</span>
+        <span className="text-muted-foreground">desde o último mês</span>
       </div>
     </div>
   )
