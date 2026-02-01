@@ -52,26 +52,26 @@ export function SearchPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-8">
       <div className="text-center space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Buscar Dados do Imóvel</h2>
-        <p className="text-muted-foreground">Digite o endereço ou CEP para localizar a Inscrição Municipal e Proprietário.</p>
+        <h2 className="text-4xl font-bold tracking-tight text-white">Buscar Dados do Imóvel</h2>
+        <p style={{ color: 'rgba(255, 255, 255, 0.7)' }}>Digite o endereço ou CEP para localizar a Inscrição Municipal e Proprietário.</p>
       </div>
 
-      <div className="bg-card p-6 rounded-xl border border-border shadow-sm">
+      <div className="glass-card p-6 rounded-xl shadow-lg">
         <form onSubmit={handleSearch} className="flex gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+            <Search className="absolute left-3 top-3 h-5 w-5 text-blue-400 icon-glow" />
              <input 
               type="text" 
               value={address}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="Ex: Rua Pamplona, 1234 - Jardins, São Paulo"
-              className="w-full pl-10 pr-4 py-3 rounded-lg border border-input bg-background focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+              className="w-full pl-10 pr-4 py-3 rounded-lg border border-white/20 bg-white/5 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all backdrop-blur-sm"
             />
           </div>
           <button 
             disabled={loading}
             type="submit"
-            className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-medium hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
+            className="btn-futuristic px-6 py-3 rounded-lg font-medium text-white disabled:opacity-50 flex items-center gap-2"
           >
             {loading ? <Loader2 className="animate-spin" /> : <Search size={20} />}
             Buscar
@@ -80,18 +80,18 @@ export function SearchPage() {
       </div>
 
       {searchStatus && (
-        <div className="bg-card rounded-xl border border-border overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-           <div className="p-6 border-b border-border bg-secondary/30 flex items-center justify-between">
+        <div className="glass-card rounded-xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+           <div className="p-6 border-b border-white/10 bg-white/5 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
-                   {loading ? <Loader2 className="animate-spin text-primary" /> : <Building className="text-primary" />}
+                <div className="h-10 w-10 bg-blue-500/20 rounded-full flex items-center justify-center border border-blue-500/30">
+                   {loading ? <Loader2 className="animate-spin text-blue-400 icon-glow" /> : <Building className="text-blue-400 icon-glow" />}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground">Status da Busca</h3>
-                  <p className="text-sm text-muted-foreground">{searchStatus.message}</p>
+                  <h3 className="font-semibold text-white">Status da Busca</h3>
+                  <p className="text-sm text-white/60">{searchStatus.message}</p>
                 </div>
               </div>
-              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-xs font-bold font-mono">
+              <span className="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-xs font-bold font-mono border border-blue-500/30">
                 {searchStatus.status}
               </span>
            </div>
@@ -103,21 +103,21 @@ export function SearchPage() {
                    const result = JSON.parse(searchStatus.resultSummary);
                    return (
                      <>
-                       <div className="bg-card rounded-xl border border-border p-6 shadow-sm">
-                  <h3 className="font-semibold mb-4 text-lg border-b border-border pb-2">Resultado da Análise</h3>
+                       <div className="glass-card rounded-xl p-6 shadow-lg">
+                  <h3 className="font-semibold mb-4 text-xl border-b border-white/10 pb-3 text-white">Resultado da Análise</h3>
                   
                   {result.intelligence && (
-                      <div className="mb-6 p-4 bg-secondary/30 rounded-lg border border-border">
+                      <div className="mb-6 p-4 bg-gradient-to-br from-blue-500/10 to-violet-500/10 rounded-lg border border-blue-500/30">
                           <div className="flex justify-between items-start">
                               <div>
-                                  <h4 className="font-medium text-foreground">Score de Saúde do Imóvel</h4>
-                                  <p className="text-sm text-muted-foreground mt-1">Baseado em regularidade, endereço e pendências.</p>
+                                  <h4 className="font-medium text-white">Score de Saúde do Imóvel</h4>
+                                  <p className="text-sm text-white/60 mt-1">Baseado em regularidade, endereço e pendências.</p>
                               </div>
                               <div className="flex flex-col items-end">
                                   <span className={`text-3xl font-bold ${result.intelligence.score >= 70 ? 'text-emerald-500' : 'text-amber-500'}`}>
                                       {result.intelligence.score}/100
                                   </span>
-                                  <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Classificação {result.intelligence.classification}</span>
+                                  <span className="text-xs font-medium uppercase tracking-wider text-white/50">Classificação {result.intelligence.classification}</span>
                               </div>
                           </div>
                       </div>
@@ -125,25 +125,25 @@ export function SearchPage() {
 
                   <div className="grid grid-cols-2 gap-x-8 gap-y-4 text-sm mt-4">
                     <div>
-                      <span className="text-muted-foreground block text-xs uppercase tracking-wider font-medium mb-1">Inscrição Municipal</span>
-                      <span className="font-mono text-foreground font-medium">{result.inscricao || 'Não encontrada'}</span>
+                      <span className="text-white/60 block text-xs uppercase tracking-wider font-medium mb-1">Inscrição Municipal</span>
+                      <span className="font-mono text-white font-medium">{result.inscricao || 'Não encontrada'}</span>
                     </div>
                     <div>
-                      <span className="text-muted-foreground block text-xs uppercase tracking-wider font-medium mb-1">Matrícula (Simulada)</span>
-                      <span className="font-mono text-foreground">123.456.789</span>
+                      <span className="text-white/60 block text-xs uppercase tracking-wider font-medium mb-1">Matrícula (Simulada)</span>
+                      <span className="font-mono text-white">123.456.789</span>
                     </div>
                     <div className="col-span-2">
-                       <span className="text-muted-foreground block text-xs uppercase tracking-wider font-medium mb-1">Proprietário</span>
+                       <span className="text-white/60 block text-xs uppercase tracking-wider font-medium mb-1">Proprietário</span>
                        <div className="flex justify-between items-center">
-                          <span className="font-medium text-foreground">{result.owner?.name}</span>
-                          <span className="text-xs font-mono bg-secondary px-2 py-0.5 rounded text-muted-foreground">{result.owner?.cpf}</span>
+                          <span className="font-medium text-white">{result.owner?.name}</span>
+                          <span className="text-xs font-mono bg-white/10 px-2 py-0.5 rounded text-white/70">{result.owner?.cpf}</span>
                        </div>
                     </div>
                   </div>
                   
-                  <div className="mt-6 pt-4 border-t border-border flex justify-end gap-3">
+                  <div className="mt-6 pt-4 border-t border-white/10 flex justify-end gap-3">
                         <button
-                            className="bg-card hover:bg-accent text-foreground px-4 py-2 rounded-lg font-medium border border-border transition-colors flex items-center gap-2 text-sm"
+                            className="glass-card hover:bg-white/10 text-white px-4 py-2 rounded-lg font-medium border border-white/20 transition-colors flex items-center gap-2 text-sm"
                             onClick={() => alert('Imóvel marcado para publicação! O feed XML será atualizado.')}
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/><path d="M12 12v9"/><path d="m16 16-4-4-4 4"/></svg>
@@ -154,7 +154,7 @@ export function SearchPage() {
                             href={`http://localhost:8001${result.report_url}`} 
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center gap-2 text-sm"
+                            className="btn-futuristic px-4 py-2 rounded-lg font-medium text-white transition-colors flex items-center gap-2 text-sm"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="M9 15l3 3 3-3"/></svg>
                             Baixar Relatório (PDF)
@@ -167,7 +167,7 @@ export function SearchPage() {
                  }
                })()}
 
-               <button className="w-full py-3 bg-secondary hover:bg-secondary/80 text-secondary-foreground rounded-lg font-medium transition-colors border border-border">
+               <button className="w-full py-3 btn-futuristic text-white rounded-lg font-medium transition-colors border border-white/20">
                  Desbloquear Contato Completo (5 Créditos)
                </button>
              </div>
